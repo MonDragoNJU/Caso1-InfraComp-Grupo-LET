@@ -1,4 +1,4 @@
-# Simulación de Línea de Producción con Concurrencia en Java
+# Caso 1 - Grupo LET
 
 ## Descripción
 Este proyecto implementa una simulación de una línea de producción utilizando concurrencia en Java. Se modelan los distintos actores del sistema como Threads que interactúan con recursos compartidos representados por buzones de productos.
@@ -7,12 +7,6 @@ Este proyecto implementa una simulación de una línea de producción utilizando
 - **Julian Mondragon**
 - **Alejandro Hoyos**
 - **Samuel Pena**
-
-## Características principales
-- **Productores:** Generan productos y los depositan en un buzón de revisión.
-- **Equipo de Calidad:** Revisa productos y decide si aprueban o deben ser reprocesados.
-- **Buzones sincronizados:** Se usan mecanismos de sincronización (`synchronized`, `wait`, `notifyAll`) para evitar condiciones de carrera.
-- **Depósito:** Solo permite el almacenamiento de un producto a la vez.
 
 ## Ejecución
 No se...
