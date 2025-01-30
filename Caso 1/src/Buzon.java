@@ -18,7 +18,6 @@ public class Buzon {
     }
     
     //Distincion en donde se va a depositar.
-
     //Depositar en el buzon de revision
     public synchronized void depositarRevision(Producto producto) throws InterruptedException {
         while (productos.size() >= capacidad) {

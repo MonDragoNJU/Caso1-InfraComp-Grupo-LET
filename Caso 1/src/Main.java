@@ -20,7 +20,7 @@ public class Main {
         
         for (int i = 0; i < numOperadores; i++) {
             new Productor(buzonReproceso, buzonRevision).start();
-            new EquipoCalidad(buzonRevision, buzonReproceso, deposito).start();
+            new EquipoCalidad(buzonRevision, buzonReproceso, deposito, numProductos).start();
         }
         
         scanner.close();
