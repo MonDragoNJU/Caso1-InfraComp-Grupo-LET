@@ -21,7 +21,6 @@ public class Main {
         Thread[] productores = new Thread[numOperadores];
         Thread[] equiposCalidad = new Thread[numOperadores];
         
-        // Iniciar los hilos de productores y equipos de calidad
         for (int i = 0; i < numOperadores; i++) {
             productores[i] = new Productor(buzonReproceso, buzonRevision);
             equiposCalidad[i] = new EquipoCalidad(buzonRevision, buzonReproceso, deposito, numProductos);
@@ -29,7 +28,7 @@ public class Main {
             equiposCalidad[i].start();
         }
 
-        // Esperar a que todos los hilos terminen
+        // Esperar a que todos los Threads terminen
         try {
             for (int i = 0; i < numOperadores; i++) {
                 productores[i].join();
