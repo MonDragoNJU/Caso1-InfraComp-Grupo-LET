@@ -1,6 +1,11 @@
 import java.util.Scanner;
 
 public class Main {
+
+    public static Buzon buzonReproceso = new Buzon();
+    public static Buzon buzonRevision = new Buzon();
+    public static Buzon deposito = new Buzon();
+
     public static void main(String[] args) {
         
         Scanner scanner = new Scanner(System.in);
@@ -13,17 +18,14 @@ public class Main {
         
         System.out.print("Ingrese la capacidad maxima del buzon de revision: ");
         int capacidadBuzon = scanner.nextInt();
-        
-        Buzon buzonReproceso = new Buzon();
-        Buzon buzonRevision = new Buzon(capacidadBuzon);
-        Buzon deposito = new Buzon();
+        buzonRevision.setCapacidad(capacidadBuzon);
 
         Thread[] productores = new Thread[numOperadores];
         Thread[] equiposCalidad = new Thread[numOperadores];
         
         for (int i = 0; i < numOperadores; i++) {
-            productores[i] = new Productor(buzonReproceso, buzonRevision);
-            equiposCalidad[i] = new EquipoCalidad(buzonRevision, buzonReproceso, deposito, numProductos);
+            productores[i] = new Productor();
+            equiposCalidad[i] = new EquipoCalidad(numProductos);
             productores[i].start();
             equiposCalidad[i].start();
         }

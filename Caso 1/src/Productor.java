@@ -1,30 +1,23 @@
 public class Productor extends Thread{
-    private Buzon buzonReproceso;
-    private Buzon buzonRevision;
     private static boolean fin = false;
-    
-    public Productor(Buzon buzonReproceso, Buzon buzonRevision) {
-        this.buzonReproceso = buzonReproceso;
-        this.buzonRevision = buzonRevision;
-    }
     
     public void run() {
         try {
             while (!fin) {
                 Producto producto;
-                synchronized (buzonReproceso) {
-                    if (!buzonReproceso.getProductos().isEmpty()) {
-                        producto = buzonReproceso.retirar("reproceso");
+                synchronized (Main.buzonReproceso) {
+                    if (!Main.buzonReproceso.getProductos().isEmpty()) {
+                        producto = Main.buzonReproceso.retirar("reproceso");
                         System.out.println("[PRODUCTOR] Reprocesó: " + producto);
                         if (producto.getMensaje().equals("FIN")) {
                             fin = true;
                         } else {
-                            buzonRevision.depositarRevision(producto);
+                            Main.buzonRevision.depositarRevision(producto);
                         }
                     } else {
                         producto = new Producto(false);
                         System.out.println("[PRODUCTOR] Produjo: " + producto);
-                        buzonRevision.depositarRevision(producto);
+                        Main.buzonRevision.depositarRevision(producto);
                     }
                 }
                 Thread.sleep(1000);

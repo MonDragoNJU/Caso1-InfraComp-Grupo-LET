@@ -1,26 +1,20 @@
 import java.util.Random;
 
 public class EquipoCalidad extends Thread {
-    private Buzon buzonRevision;
-    private Buzon buzonReproceso;
-    private Buzon deposito;
     private int fallos = 0;
     private Random random = new Random();
     private static int productosDepositados = 0;
     private static int numProductos;
     private static boolean fin = false;
     
-    public EquipoCalidad(Buzon buzonRevision, Buzon buzonReproceso, Buzon deposito, int numProductos) {
-        this.buzonRevision = buzonRevision;
-        this.buzonReproceso = buzonReproceso;
-        this.deposito = deposito;
+    public EquipoCalidad(int numProductos) {
         EquipoCalidad.numProductos = numProductos;
     }
     
     private synchronized boolean verificarLimite(Producto producto) throws InterruptedException {
         if (productosDepositados >= numProductos) {
             producto.setMensaje("FIN");
-            buzonReproceso.depositarReproceso(producto);
+            Main.buzonReproceso.depositarReproceso(producto);
             fin = true;
             return true;
         }
@@ -30,7 +24,7 @@ public class EquipoCalidad extends Thread {
     public void run() {
         try {
             while (!fin) {
-                Producto producto = buzonRevision.retirar("revision");
+                Producto producto = Main.buzonRevision.retirar("revision");
                 
                 if (verificarLimite(producto)) {
                     continue;
@@ -40,11 +34,11 @@ public class EquipoCalidad extends Thread {
                 
                 if (resultado % 7 == 0 && fallos < Math.floor(0.1 * numProductos)) {
                     System.out.println("[CALIDAD] Producto " + producto.getId() + " falló y va a reproceso.");
-                    buzonReproceso.depositarReproceso(producto);
+                    Main.buzonReproceso.depositarReproceso(producto);
                     fallos++;
                 } else {
                     System.out.println("[CALIDAD] Producto " + producto.getId() + " aprobado y enviado a depósito.");
-                    deposito.depositarDeposito(producto);
+                    Main.deposito.depositarDeposito(producto);
                     
                     synchronized (this) {
                         productosDepositados++;

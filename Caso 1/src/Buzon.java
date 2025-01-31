@@ -3,18 +3,14 @@ import java.util.Queue;
 
 public class Buzon {
     private Queue<Producto> productos = new LinkedList<>();
-    private int capacidad;
-    
-    public Buzon(int capacidad) {
-        this.capacidad = capacidad;
-    }
-
-    public Buzon() {
-        this.capacidad = Integer.MAX_VALUE;
-    }
+    private int capacidad = Integer.MAX_VALUE;
 
     public Queue<Producto> getProductos() {
         return productos;
+    }
+
+    public void setCapacidad(int capacidad) {
+        this.capacidad = capacidad;
     }
     
     //Distincion en donde se va a depositar.
