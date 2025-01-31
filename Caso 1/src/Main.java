@@ -7,16 +7,26 @@ public class Main {
     public static Buzon deposito = new Buzon();
 
     public static void main(String[] args) {
+
+        String mensaje = "\n" +
+        "\033[1;34m**************************************************\033[0m\n" +
+        "\033[1;32m           BIENVENIDO A LA DE SIMULACION\033[0m\n" +
+        "\033[1;32m              DE LINEA DE PRODUCCION\033[0m\n" +
+        "\033[1;34m**************************************************\033[0m\n" +
+        "\033[1;36mIngrese los parámetros requeridos para comenzar.\033[0m\n" +
+        "\033[1;34m**************************************************\033[0m\n";
+
+        System.out.println(mensaje);
         
         Scanner scanner = new Scanner(System.in);
         
-        System.out.print("Ingrese el numero de operadores: ");
+        System.out.print("\033[1;36mIngrese el numero de operadores: \033[0m");
         int numOperadores = scanner.nextInt();
         
-        System.out.print("Ingrese el numero total de productos a producir: ");
+        System.out.print("\033[1;36mIngrese el numero total de productos a producir: \033[0m");
         int numProductos = scanner.nextInt();
         
-        System.out.print("Ingrese la capacidad maxima del buzon de revision: ");
+        System.out.print("\033[1;36mIngrese la capacidad maxima del buzon de revision: \033[0m");
         int capacidadBuzon = scanner.nextInt();
         buzonRevision.setCapacidad(capacidadBuzon);
 
@@ -39,8 +49,6 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        System.out.println("Simulacion finalizada.");
         
         scanner.close();
     }

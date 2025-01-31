@@ -13,6 +13,7 @@ public class EquipoCalidad extends Thread {
     
     private synchronized boolean verificarLimite(Producto producto) throws InterruptedException {
         if (productosDepositados >= numProductos) {
+            System.out.println("[CALIDAD] Capacidad máxima del depósito alcanzada. Enviando mensaje FIN.");
             producto.setMensaje("FIN");
             Main.buzonReproceso.depositarReproceso(producto);
             fin = true;
@@ -27,7 +28,7 @@ public class EquipoCalidad extends Thread {
                 Producto producto = Main.buzonRevision.retirar("revision");
                 
                 if (verificarLimite(producto)) {
-                    continue;
+                    break;
                 }
                 
                 int resultado = random.nextInt(100) + 1;
@@ -37,12 +38,18 @@ public class EquipoCalidad extends Thread {
                     Main.buzonReproceso.depositarReproceso(producto);
                     fallos++;
                 } else {
-                    System.out.println("[CALIDAD] Producto " + producto.getId() + " aprobado y enviado a depósito.");
-                    Main.deposito.depositarDeposito(producto);
-                    
                     synchronized (this) {
                         productosDepositados++;
+                        if (productosDepositados >= numProductos) {
+                            producto.setEsReproceso(true);
+                            producto.setMensaje("FIN");
+                            Main.buzonReproceso.depositarReproceso(producto);
+                            fin = true;
+                            break;
+                        }
                     }
+                    System.out.println("[CALIDAD] Producto " + producto.getId() + " aprobado y enviado a depósito.");
+                    Main.deposito.depositarDeposito(producto);
                 }
                 
                 Thread.sleep(1000);

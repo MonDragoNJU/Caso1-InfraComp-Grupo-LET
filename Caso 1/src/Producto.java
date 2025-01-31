@@ -17,6 +17,10 @@ public class Producto {
         this.mensaje = mensaje;
     }
 
+    public void setEsReproceso(boolean esReproceso) {
+        this.esReproceso = esReproceso;
+    }
+
     @Override
     public String toString() {
         return "Producto " + id;

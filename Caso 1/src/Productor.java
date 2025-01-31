@@ -1,16 +1,27 @@
-public class Productor extends Thread{
+public class Productor extends Thread {
     private static boolean fin = false;
-    
+
+    public static synchronized void detenerProduccion() {
+        fin = true;
+    }
+
+    public static synchronized boolean produccionFinalizada() {
+        return fin;
+    }
+
     public void run() {
         try {
-            while (!fin) {
+            while (!produccionFinalizada()) {
                 Producto producto;
                 synchronized (Main.buzonReproceso) {
                     if (!Main.buzonReproceso.getProductos().isEmpty()) {
                         producto = Main.buzonReproceso.retirar("reproceso");
                         System.out.println("[PRODUCTOR] Reprocesó: " + producto);
-                        if (producto.getMensaje().equals("FIN")) {
-                            fin = true;
+
+                        if ("FIN".equals(producto.getMensaje())) {
+                            detenerProduccion();
+                            System.out.println("[PRODUCTOR] Se recibió el mensaje FIN. Terminando producción.");
+                            break;
                         } else {
                             Main.buzonRevision.depositarRevision(producto);
                         }
