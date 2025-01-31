@@ -35,6 +35,7 @@ public class EquipoCalidad extends Thread {
                 
                 if (resultado % 7 == 0 && fallos < Math.floor(0.1 * numProductos)) {
                     System.out.println("[CALIDAD] Producto " + producto.getId() + " falló y va a reproceso.");
+                    producto.setEsReproceso(true);
                     Main.buzonReproceso.depositarReproceso(producto);
                     fallos++;
                 } else {
