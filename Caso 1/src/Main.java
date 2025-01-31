@@ -17,11 +17,29 @@ public class Main {
         Buzon buzonReproceso = new Buzon();
         Buzon buzonRevision = new Buzon(capacidadBuzon);
         Buzon deposito = new Buzon();
+
+        Thread[] productores = new Thread[numOperadores];
+        Thread[] equiposCalidad = new Thread[numOperadores];
         
+        // Iniciar los hilos de productores y equipos de calidad
         for (int i = 0; i < numOperadores; i++) {
-            new Productor(buzonReproceso, buzonRevision).start();
-            new EquipoCalidad(buzonRevision, buzonReproceso, deposito, numProductos).start();
+            productores[i] = new Productor(buzonReproceso, buzonRevision);
+            equiposCalidad[i] = new EquipoCalidad(buzonRevision, buzonReproceso, deposito, numProductos);
+            productores[i].start();
+            equiposCalidad[i].start();
         }
+
+        // Esperar a que todos los hilos terminen
+        try {
+            for (int i = 0; i < numOperadores; i++) {
+                productores[i].join();
+                equiposCalidad[i].join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Simulacion finalizada.");
         
         scanner.close();
     }

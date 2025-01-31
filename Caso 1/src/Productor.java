@@ -18,7 +18,6 @@ public class Productor extends Thread{
                         System.out.println("[PRODUCTOR] Reprocesó: " + producto);
                         if (producto.getMensaje().equals("FIN")) {
                             fin = true;
-                            System.out.println("[PRODUCTOR] Fin de la producción.");
                         } else {
                             buzonRevision.depositarRevision(producto);
                         }

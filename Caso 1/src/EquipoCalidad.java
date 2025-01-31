@@ -4,6 +4,7 @@ public class EquipoCalidad extends Thread {
     private Buzon buzonRevision;
     private Buzon buzonReproceso;
     private Buzon deposito;
+    private int fallos = 0;
     private Random random = new Random();
     private static int productosDepositados = 0;
     private static int numProductos;
@@ -37,9 +38,10 @@ public class EquipoCalidad extends Thread {
                 
                 int resultado = random.nextInt(100) + 1;
                 
-                if (resultado % 7 == 0) {
+                if (resultado % 7 == 0 && fallos < Math.floor(0.1 * numProductos)) {
                     System.out.println("[CALIDAD] Producto " + producto.getId() + " falló y va a reproceso.");
                     buzonReproceso.depositarReproceso(producto);
+                    fallos++;
                 } else {
                     System.out.println("[CALIDAD] Producto " + producto.getId() + " aprobado y enviado a depósito.");
                     deposito.depositarDeposito(producto);
