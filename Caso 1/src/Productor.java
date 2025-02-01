@@ -25,7 +25,19 @@ public class Productor extends Thread {
 
         Producto producto = new Producto();
         System.out.println("\033[1;34m[PRODUCTOR]\033[0m " + " Producto " + producto.getId() + " creado");
-        buzonRevision.depositar(producto);
+
+        //Espera pasiva
+        synchronized (buzonRevision) {
+            while (!buzonRevision.hayEspacio()) {
+                try {
+                    buzonRevision.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            buzonRevision.depositar(producto);
+            buzonRevision.notifyAll();
+        }
     }
 
 }

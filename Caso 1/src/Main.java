@@ -35,7 +35,7 @@ public class Main {
             buzonReproceso.depositar(new Producto());
         }
 
-        for (int i = 0; i < numProductos; i++) {
+        for (int i = 0; i < numOperadores; i++) {
             Productor productor = new Productor(buzonReproceso, buzonRevision);
             productor.start();
         }

@@ -14,18 +14,24 @@ public class Buzon {
     }
 
     public boolean hayProductos() {
-        if (productos.size() > 0) {
-            return true;
-        }
-        return false;
+        return !productos.isEmpty();
     }
 
-    public synchronized boolean depositar(Producto producto) {
-        if (productos.size() < capacidad) {
-            productos.add(producto);
-            return true;
+    public boolean hayEspacio() {
+        return productos.size() < capacidad;
+    }
+
+    public synchronized void depositar(Producto producto) {
+        if (productos.size() >= capacidad) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
         }
-        return false;
+        productos.add(producto);
+        notifyAll();
     }
 
     public synchronized Producto retirar() {

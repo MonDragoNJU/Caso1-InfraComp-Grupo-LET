@@ -8,8 +8,12 @@ public class Producto {
         this.id = contador++;
     }
     
-    public int getId() { return id; }
-    public String getMensaje() { return mensaje; }
+    public int getId() { 
+        return id; 
+    }
+    public String getMensaje() { 
+        return mensaje; 
+    }
 
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
