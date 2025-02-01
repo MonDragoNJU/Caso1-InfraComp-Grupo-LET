@@ -1,41 +1,31 @@
 public class Productor extends Thread {
-    private static boolean fin = false;
 
-    public static synchronized void detenerProduccion() {
-        fin = true;
+    private Buzon buzonReproceso;
+    private Buzon buzonRevision;
+
+    public Productor(Buzon buzonReproceso, Buzon buzonRevision) {
+        this.buzonReproceso = buzonReproceso;
+        this.buzonRevision = buzonRevision;
     }
 
-    public static synchronized boolean produccionFinalizada() {
-        return fin;
-    }
-
+    @Override
     public void run() {
-        try {
-            while (!produccionFinalizada()) {
-                Producto producto;
-                synchronized (Main.buzonReproceso) {
-                    if (!Main.buzonReproceso.getProductos().isEmpty()) {
-                        producto = Main.buzonReproceso.retirar("reproceso");
-
-                        System.out.println("[PRODUCTOR] Reprocesó: " + producto);
-
-                        if ("FIN".equals(producto.getMensaje())) {
-                            detenerProduccion();
-                            System.out.println("[PRODUCTOR] Se recibió el mensaje FIN. Terminando producción.");
-                            break;
-                        } else {
-                            Main.buzonRevision.depositarRevision(producto);
-                        }
-                    } else {
-                        producto = new Producto(false);
-                        System.out.println("[PRODUCTOR] Produjo: " + producto);
-                        Main.buzonRevision.depositarRevision(producto);
-                    }
+        boolean reprocesoTerminado = false;
+        while (!reprocesoTerminado) {
+            synchronized (buzonReproceso) {
+                if (buzonReproceso.hayProductos()) {
+                    Producto producto = buzonReproceso.retirar();
+                    System.out.println("\033[1;34m[PRODUCTOR]\033[0m " + " Producto " + producto.getId() + " reprocesado");
+                    buzonRevision.depositar(producto);
+                } else {
+                reprocesoTerminado = true;
                 }
-                Thread.sleep(1000);
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+
+        Producto producto = new Producto();
+        System.out.println("\033[1;34m[PRODUCTOR]\033[0m " + " Producto " + producto.getId() + " creado");
+        buzonRevision.depositar(producto);
     }
+
 }

@@ -12,44 +12,24 @@ public class Buzon {
     public void setCapacidad(int capacidad) {
         this.capacidad = capacidad;
     }
-    
-    //Distincion en donde se va a depositar.
-    //Depositar en el buzon de revision
-    public synchronized void depositarRevision(Producto producto) throws InterruptedException {
-        while (productos.size() >= capacidad) {
-            wait();
+
+    public boolean hayProductos() {
+        if (productos.size() > 0) {
+            return true;
         }
-        productos.add(producto);
-        System.out.println("[BUZON REVISION] Producto en revision: " + producto);
-        notifyAll();
+        return false;
     }
 
-    //Depositar en el deposito
-    public synchronized void depositarDeposito(Producto producto) throws InterruptedException {
-        productos.add(producto);
-        System.out.println("[DEPOSITO] Producto depositado: " + producto);
-        notifyAll();
+    public synchronized boolean depositar(Producto producto) {
+        if (productos.size() < capacidad) {
+            productos.add(producto);
+            return true;
+        }
+        return false;
     }
 
-    //Depositar en el buzon de reproceso
-    public synchronized void depositarReproceso(Producto producto) throws InterruptedException {
-        productos.add(producto);
-        System.out.println("[BUZON REPROCESO] Producto en reproceso: " + producto);
-        notifyAll();
+    public synchronized Producto retirar() {
+        return productos.poll();
     }
     
-    public synchronized Producto retirar(String tipo) throws InterruptedException {
-        while (productos.isEmpty() && !EquipoCalidad.produccionFinalizada()) {
-            wait();
-        }
-
-        Producto producto = productos.poll();
-        if (tipo.equals("revision")) {
-            System.out.println("[BUZON REVISION] Producto retirado: " + producto);
-        } else {
-            System.out.println("[BUZON REPROCESO] Producto retirado: " + producto);
-        }
-        notifyAll();
-        return producto;
-    }
 }

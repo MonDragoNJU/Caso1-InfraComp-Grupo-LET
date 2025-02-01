@@ -2,10 +2,6 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static Buzon buzonReproceso = new Buzon();
-    public static Buzon buzonRevision = new Buzon();
-    public static Buzon deposito = new Buzon();
-
     public static void main(String[] args) {
 
         String mensaje = "\n" +
@@ -17,6 +13,11 @@ public class Main {
         "\033[1;34m**************************************************\033[0m\n";
 
         System.out.println(mensaje);
+
+        //Monitores
+        Buzon buzonReproceso = new Buzon();
+        Buzon buzonRevision = new Buzon();
+        Buzon deposito = new Buzon();
         
         Scanner scanner = new Scanner(System.in);
         
@@ -30,24 +31,13 @@ public class Main {
         int capacidadBuzon = scanner.nextInt();
         buzonRevision.setCapacidad(capacidadBuzon);
 
-        Thread[] productores = new Thread[numOperadores];
-        Thread[] equiposCalidad = new Thread[numOperadores];
-        
-        for (int i = 0; i < numOperadores; i++) {
-            productores[i] = new Productor();
-            equiposCalidad[i] = new EquipoCalidad(numProductos);
-            productores[i].start();
-            equiposCalidad[i].start();
+        for (int i = 0; i < 10; i++) {
+            buzonReproceso.depositar(new Producto());
         }
 
-        // Esperar a que todos los Threads terminen
-        try {
-            for (int i = 0; i < numOperadores; i++) {
-                productores[i].join();
-                equiposCalidad[i].join();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        for (int i = 0; i < numProductos; i++) {
+            Productor productor = new Productor(buzonReproceso, buzonRevision);
+            productor.start();
         }
         
         scanner.close();
