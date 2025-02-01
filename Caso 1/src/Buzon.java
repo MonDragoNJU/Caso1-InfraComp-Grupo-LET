@@ -28,18 +28,21 @@ public class Buzon {
     public synchronized void depositarDeposito(Producto producto) throws InterruptedException {
         productos.add(producto);
         System.out.println("[DEPOSITO] Producto depositado: " + producto);
+        notifyAll();
     }
 
     //Depositar en el buzon de reproceso
     public synchronized void depositarReproceso(Producto producto) throws InterruptedException {
         productos.add(producto);
         System.out.println("[BUZON REPROCESO] Producto en reproceso: " + producto);
+        notifyAll();
     }
     
     public synchronized Producto retirar(String tipo) throws InterruptedException {
-        while (productos.isEmpty()) {
+        while (productos.isEmpty() && !EquipoCalidad.produccionFinalizada()) {
             wait();
         }
+
         Producto producto = productos.poll();
         if (tipo.equals("revision")) {
             System.out.println("[BUZON REVISION] Producto retirado: " + producto);

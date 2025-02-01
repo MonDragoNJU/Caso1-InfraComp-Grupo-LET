@@ -16,6 +16,7 @@ public class Productor extends Thread {
                 synchronized (Main.buzonReproceso) {
                     if (!Main.buzonReproceso.getProductos().isEmpty()) {
                         producto = Main.buzonReproceso.retirar("reproceso");
+
                         System.out.println("[PRODUCTOR] Reprocesó: " + producto);
 
                         if ("FIN".equals(producto.getMensaje())) {
