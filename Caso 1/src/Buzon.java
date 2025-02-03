@@ -13,29 +13,36 @@ public class Buzon {
         this.capacidad = capacidad;
     }
 
-    public boolean hayProductos() {
-        return !productos.isEmpty();
+    public synchronized ResultadoProducto hayProductos(int id) {
+        if (!productos.isEmpty()) {
+            Producto producto = productos.poll();
+            System.out.println("\033[1;32m[PRODUCTOR " + id + "]\033[0m Producto " + producto.getId() + " retirado de reproceso.");
+            return new ResultadoProducto(true, producto);
+        }
+        return new ResultadoProducto(false, null);
+    }
+    
+
+    public synchronized void ingresarRevision(int id) throws InterruptedException {
+        while (productos.size() >= capacidad) {
+            wait();
+        }
+        Producto producto = new Producto();
+        productos.add(producto);
+        System.out.println("\033[1;34m[PRODUCTOR " + id + "]\033[0m Producto " + producto.getId() + " creado y enviado a revision.");
+        notifyAll();
     }
 
-    public boolean hayEspacio() {
-        return productos.size() < capacidad;
-    }
-
-    public synchronized void depositar(Producto producto) {
-        if (productos.size() >= capacidad) {
+    public synchronized void depositar(int id, Producto producto) {
+        while (productos.size() >= capacidad) {
             try {
                 wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            
         }
         productos.add(producto);
-        notifyAll();
+        System.out.println("\033[1;32m[PRODUCTOR " + id + "]\033[0m Producto " + producto.getId() + " depositado.");
     }
 
-    public synchronized Producto retirar() {
-        return productos.poll();
-    }
-    
 }

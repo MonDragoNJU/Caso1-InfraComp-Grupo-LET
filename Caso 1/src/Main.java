@@ -6,7 +6,7 @@ public class Main {
 
         String mensaje = "\n" +
         "\033[1;34m**************************************************\033[0m\n" +
-        "\033[1;32m           BIENVENIDO A LA DE SIMULACION\033[0m\n" +
+        "\033[1;32m          BIENVENIDO A LA DE SIMULACION\033[0m\n" +
         "\033[1;32m              DE LINEA DE PRODUCCION\033[0m\n" +
         "\033[1;34m**************************************************\033[0m\n" +
         "\033[1;36mIngrese los parámetros requeridos para comenzar.\033[0m\n" +
@@ -32,12 +32,15 @@ public class Main {
         buzonRevision.setCapacidad(capacidadBuzon);
 
         for (int i = 0; i < 10; i++) {
-            buzonReproceso.depositar(new Producto());
+            Producto producto = new Producto();
+            buzonReproceso.getProductos().add(producto);
         }
 
         for (int i = 0; i < numOperadores; i++) {
-            Productor productor = new Productor(buzonReproceso, buzonRevision);
+            Productor productor = new Productor(i + 1, buzonReproceso, buzonRevision);
+            //EquipoCalidad equipoCalidad = new EquipoCalidad(buzonReproceso, deposito);
             productor.start();
+            //equipoCalidad.start();
         }
         
         scanner.close();
