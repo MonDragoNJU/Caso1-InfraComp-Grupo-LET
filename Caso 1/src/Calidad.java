@@ -46,9 +46,11 @@ public class Calidad extends Thread{
                     reproceso.depositarReproceso(producto, id);
                     fallos--;
                 } else {
-                    System.out.println("Calidad " + id + " aprobó producto " + producto.getId());
-                    revision.decrementarMeta();
-                    deposito.depositarDeposito(producto, id);
+                    synchronized (deposito) {
+                        System.out.println("Calidad " + id + " aprobó producto " + producto.getId());
+                        revision.decrementarMeta();
+                        deposito.depositarDeposito(producto, id);
+                    }
                 }
             } else {
                 synchronized (reproceso) {
