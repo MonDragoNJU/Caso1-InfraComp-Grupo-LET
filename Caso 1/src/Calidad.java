@@ -40,20 +40,18 @@ public class Calidad extends Thread{
             }
 
             //Revisar si hay fallo o no
-            if (revision.getMeta() > 0) {
-                if ((random.nextInt(100) + 1) % 7 == 0 && fallos > 0) {
-                    System.out.println("Calidad " + id + " detectó falla en producto " + producto.getId());
-                    reproceso.depositarReproceso(producto, id);
-                    fallos--;
-                } else {
-                    synchronized (deposito) {
+            synchronized (deposito) {
+                if (revision.getMeta() > 0) {
+                    if ((random.nextInt(100) + 1) % 7 == 0 && fallos > 0) {
+                        System.out.println("Calidad " + id + " detectó falla en producto " + producto.getId());
+                        reproceso.depositarReproceso(producto, id);
+                        fallos--;
+                    } else {
                         System.out.println("Calidad " + id + " aprobó producto " + producto.getId());
                         revision.decrementarMeta();
                         deposito.depositarDeposito(producto, id);
                     }
-                }
-            } else {
-                synchronized (reproceso) {
+                } else {
                     Producto fin = new Producto();
                     fin.setMensaje("FIN");
                     reproceso.depositarReproceso(fin, id);
