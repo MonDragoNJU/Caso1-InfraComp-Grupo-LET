@@ -18,19 +18,7 @@ public class Productor extends Thread {
             synchronized (reproceso) {
                 if (!revision.sigueProduccion()) break;  // Verificar nuevamente antes de operar
                 
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                
                 producto = reproceso.removerReproceso();
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
                 if (producto != null) {
                     System.out.println("Productor " + id +
@@ -44,14 +32,6 @@ public class Productor extends Thread {
                         break;
                     }
                 } else {
-
-                    if (!revision.sigueProduccion()) break;  // Verificar nuevamente antes de crear
-
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
 
                     if (!revision.sigueProduccion()) break;
 

@@ -28,12 +28,6 @@ public class Calidad extends Thread{
                 Thread.yield(); //Espera semi-activa
             }
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             Producto producto = null;
 
             synchronized(revision) {
@@ -43,12 +37,6 @@ public class Calidad extends Thread{
                 } else {
                     System.out.println("Calidad " + id + " revisa producto " + producto.getId());
                 }
-            }
-
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
 
             //Revisar si hay fallo o no
