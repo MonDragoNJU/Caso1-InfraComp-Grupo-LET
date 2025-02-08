@@ -47,8 +47,8 @@ public class Calidad extends Thread{
                     fallos--;
                 } else {
                     System.out.println("Calidad " + id + " aprobó producto " + producto.getId());
-                    deposito.depositarDeposito(producto, id);
                     revision.decrementarMeta();
+                    deposito.depositarDeposito(producto, id);
                 }
             } else {
                 synchronized (reproceso) {
