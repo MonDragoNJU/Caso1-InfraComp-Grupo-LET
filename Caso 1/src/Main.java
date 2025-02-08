@@ -1,48 +1,49 @@
 import java.util.Scanner;
 
 public class Main {
+    public static void main(String[] args) throws InterruptedException {
 
-    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-        String mensaje = "\n" +
-        "\033[1;34m**************************************************\033[0m\n" +
-        "\033[1;32m          BIENVENIDO A LA DE SIMULACION\033[0m\n" +
-        "\033[1;32m              DE LINEA DE PRODUCCION\033[0m\n" +
-        "\033[1;34m**************************************************\033[0m\n" +
-        "\033[1;36mIngrese los parámetros requeridos para comenzar.\033[0m\n" +
-        "\033[1;34m**************************************************\033[0m\n";
+        //Pedimos el numero de operarios
+        System.out.println("Introduce el numero de operarios: ");
+        int numOperarios = sc.nextInt();
 
-        System.out.println(mensaje);
+        //Pedimos la capacidad del buzon de revision
+        System.out.println("Introduce la capacidad del buzon de revision: ");
+        int capacidadRevision = sc.nextInt();
 
-        //Monitores
-        Buzon buzonReproceso = new Buzon();
-        Buzon buzonRevision = new Buzon();
-        Buzon deposito = new Buzon();
+        //Pedimos la meta de productos a producir
+        System.out.println("Introduce la meta de productos a producir: ");
+        int meta = sc.nextInt();
         
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.print("\033[1;36mIngrese el numero de operadores: \033[0m");
-        int numOperadores = scanner.nextInt();
-        
-        System.out.print("\033[1;36mIngrese el numero total de productos a producir: \033[0m");
-        int numProductos = scanner.nextInt();
-        
-        System.out.print("\033[1;36mIngrese la capacidad maxima del buzon de revision: \033[0m");
-        int capacidadBuzon = scanner.nextInt();
-        buzonRevision.setCapacidad(capacidadBuzon);
+        //Creamos los buffer (buzones)
+        Buzon reproceso = new Buzon(Integer.MAX_VALUE, meta);
+        Buzon revision = new Buzon(capacidadRevision, meta);
+        Buzon deposito = new Buzon(Integer.MAX_VALUE, meta);
 
-        for (int i = 0; i < 10; i++) {
-            Producto producto = new Producto();
-            buzonReproceso.getProductos().add(producto);
+        //Lista de operarios
+        Productor[] productores = new Productor[numOperarios];
+        Calidad[] calidad = new Calidad[numOperarios];
+
+
+        //Creamos los operarios
+        for (int i = 0; i < numOperarios; i++) {
+            productores[i] = new Productor(i + 1, reproceso, revision);
+            calidad[i] = new Calidad(i + 1, reproceso, revision, deposito, meta);
+            productores[i].start();
+            calidad[i].start();
         }
 
-        for (int i = 0; i < numOperadores; i++) {
-            Productor productor = new Productor(i + 1, buzonReproceso, buzonRevision);
-            //EquipoCalidad equipoCalidad = new EquipoCalidad(buzonReproceso, deposito);
-            productor.start();
-            //equipoCalidad.start();
+        //Esperamos a que todos los operarios terminen
+        for (int i = 0; i < numOperarios; i++) {
+            productores[i].join();
+            calidad[i].join();
         }
-        
-        scanner.close();
+
+        sc.close();
+
+        System.out.println("Proceso terminado.");
+
     }
 }

@@ -2,47 +2,88 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class Buzon {
-    private Queue<Producto> productos = new LinkedList<>();
-    private int capacidad = Integer.MAX_VALUE;
 
-    public Queue<Producto> getProductos() {
-        return productos;
-    }
+    //Cola para almacenar los productos en el buzon
+    private Queue<Producto> productos;
 
-    public void setCapacidad(int capacidad) {
+    // Variable de control de produccion
+    public boolean continuarProduccion = true;  
+
+    //Capacidad del buzon
+    private int capacidad;
+
+    //Meta de productos a producir
+    private int meta;
+
+    public Buzon(int capacidad, int meta) {
+        this.meta = meta;
         this.capacidad = capacidad;
+        productos = new LinkedList<Producto>();
     }
 
-    public synchronized ResultadoProducto hayProductos(int id) {
-        if (!productos.isEmpty()) {
-            Producto producto = productos.poll();
-            System.out.println("\033[1;32m[PRODUCTOR " + id + "]\033[0m Producto " + producto.getId() + " retirado de reproceso.");
-            return new ResultadoProducto(true, producto);
-        }
-        return new ResultadoProducto(false, null);
+    public synchronized int getMeta() {
+        return meta;
     }
-    
 
-    public synchronized void ingresarRevision(int id) throws InterruptedException {
-        while (productos.size() >= capacidad) {
-            wait();
-        }
-        Producto producto = new Producto();
-        productos.add(producto);
-        System.out.println("\033[1;34m[PRODUCTOR " + id + "]\033[0m Producto " + producto.getId() + " creado y enviado a revision.");
+    public synchronized void decrementarMeta() {
+        meta--;
+    }
+
+    // Método para detener la producción
+    public synchronized void detenerProduccion() {
+        continuarProduccion = false;
         notifyAll();
     }
 
-    public synchronized void depositar(int id, Producto producto) {
-        while (productos.size() >= capacidad) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        productos.add(producto);
-        System.out.println("\033[1;32m[PRODUCTOR " + id + "]\033[0m Producto " + producto.getId() + " depositado.");
+    // Método para verificar si la producción sigue activa
+    public synchronized boolean sigueProduccion() {
+        return continuarProduccion;
     }
 
+    //Metodo para remover un producto del buzon de reproceso
+    public synchronized Producto removerReproceso() {
+        if (productos.isEmpty()) {
+            return null;
+        }
+        Producto producto = productos.poll();
+        return producto;
+    }
+
+    public synchronized boolean hayProductos() {
+        notifyAll();
+        return !productos.isEmpty();
+    }
+
+    public synchronized void depositarReproceso(Producto producto, int id) {
+        productos.add(producto);
+        System.out.println("Calidad " + id + " deposita producto " + producto.getId() + " en el buzon de reproceso");
+    }
+
+    //Metodo para depositar un producto en el buzon de revision
+    public synchronized void depositarRevision(Producto producto, int id) throws InterruptedException {
+        while (productos.size() >= capacidad && sigueProduccion()) {
+            System.out.println("Productor " + id + " espera espacio en el buzon de revision...");
+            wait(); //Espera pasiva sin consumir CPU
+        }
+
+        if (sigueProduccion() && productos.size() < capacidad) {
+            productos.add(producto);
+            System.out.println("Productor " + id + 
+                " deposita producto " + producto.getId() + " en el buzon de revision");
+        }
+        notifyAll(); 
+    }
+
+    public synchronized void depositarDeposito(Producto producto, int id) {
+        productos.add(producto);
+        System.out.println("Calidad " + id + " deposita producto " + producto.getId() + " en el deposito");
+    }
+
+    public synchronized Producto retirarRevision() {
+        if (productos.isEmpty()) {
+            return null;
+        }
+        Producto producto = productos.poll();
+        return producto;
+    }
 }

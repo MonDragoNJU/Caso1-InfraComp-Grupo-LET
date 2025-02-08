@@ -1,18 +1,19 @@
 public class Producto {
-
-    private static int contador = 1;
+    
+    private static int contador = 0;
     private int id;
     private String mensaje = "";
-    
+
     public Producto() {
-        this.id = contador++;
+        this.id = ++contador;
     }
-    
-    public int getId() { 
-        return id; 
+
+    public int getId() {
+        return id;
     }
-    public String getMensaje() { 
-        return mensaje; 
+
+    public String getMensaje() {
+        return mensaje;
     }
 
     public void setMensaje(String mensaje) {

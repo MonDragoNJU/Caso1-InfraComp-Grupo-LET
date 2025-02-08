@@ -1,51 +1,76 @@
-import java.util.Random;
-
 public class Productor extends Thread {
-
+    
     private int id;
-    private Buzon buzonReproceso;
-    private Buzon buzonRevision;
-    private Random random = new Random();
-    private static boolean revisionTerminada = false;
+    private Buzon reproceso;
+    private Buzon revision;
 
-
-    public Productor(int id, Buzon buzonReproceso, Buzon buzonRevision) {
+    public Productor(int id, Buzon reproceso, Buzon revision) {
         this.id = id;
-        this.buzonReproceso = buzonReproceso;
-        this.buzonRevision = buzonRevision;
+        this.reproceso = reproceso;
+        this.revision = revision;
     }
-
-    public static synchronized void terminarProduccion() {
-        revisionTerminada = true;
-    }
-
-    public static synchronized boolean isProduccionTerminada() {
-        return revisionTerminada;
-    }
-
     @Override
     public void run() {
-        while (!isProduccionTerminada()) {
-            //Reprocesar
-            ResultadoProducto resultado;
-            while ((resultado = buzonReproceso.hayProductos(id)).isExito()) {
+        while (revision.sigueProduccion()) {  // Verificar si la producción sigue activa
+
+            Producto producto = null;
+
+            synchronized (reproceso) {
+                if (!revision.sigueProduccion()) break;  // Verificar nuevamente antes de operar
+                
                 try {
-                    buzonRevision.depositar(id, resultado.getProducto());
-                    Thread.sleep(random.nextInt(2000) + 1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                
+                producto = reproceso.removerReproceso();
+
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (producto != null) {
+                    System.out.println("Productor " + id +
+                            " reprocesó producto " + producto.getId());
+
+                    // Si recibe FIN, detener producción global
+                    if ("FIN".equals(producto.getMensaje())) {
+                        System.out.println("Productor " + id +
+                                " recibió FIN. Deteniendo producción.");
+                        revision.detenerProduccion();
+                        break;
+                    }
+                } else {
+
+                    if (!revision.sigueProduccion()) break;  // Verificar nuevamente antes de crear
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (!revision.sigueProduccion()) break;
+
+                    producto = new Producto();
+                    System.out.println("Productor " + id +
+                            " creó producto " + producto.getId());
+                }
             }
 
-            //Depositar en revision
+            if (!revision.sigueProduccion()) break;  // Verificar antes de depositar
+
             try {
-                Thread.sleep(random.nextInt(2000) + 1000); //Tiempo de trabajo random
-                buzonRevision.ingresarRevision(id); //Espera Pasiva
+                revision.depositarRevision(producto, id);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
+                break;
             }
-
         }
-    }
 
+    }
 }
