@@ -46,7 +46,7 @@ public class Main {
         System.out.println("Proceso terminado.");
         System.out.println("Numero de productos en el buzon de reproceso: " + reproceso.getCapacidad());
         System.out.println("Numero de productos en el buzon de revision: " + revision.getCapacidad());
-        System.out.println("Numero de productos en eldeposito: " + deposito.getCapacidad());
+        System.out.println("Numero de productos en el deposito: " + deposito.getCapacidad());
 
     }
 }
