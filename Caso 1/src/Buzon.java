@@ -21,6 +21,10 @@ public class Buzon {
         productos = new LinkedList<Producto>();
     }
 
+    public int getCapacidad() {
+        return productos.size();
+    }
+
     public synchronized int getMeta() {
         return meta;
     }

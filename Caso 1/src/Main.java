@@ -44,6 +44,9 @@ public class Main {
         sc.close();
 
         System.out.println("Proceso terminado.");
+        System.out.println("Numero de productos en el buzon de reproceso: " + reproceso.getCapacidad());
+        System.out.println("Numero de productos en el buzon de revision: " + revision.getCapacidad());
+        System.out.println("Numero de productos en eldeposito: " + deposito.getCapacidad());
 
     }
 }
